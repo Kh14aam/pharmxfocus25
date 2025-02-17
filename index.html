@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="PharmX Focus Session: Enhance your productivity with focused 25-minute sessions followed by 5-minute breaks. Stay in the zone with PharmX." />
+  <title>PharmX Focus Session</title>
+  <!-- Import Mona Sans for all text -->
+  <link href="https://fonts.googleapis.com/css2?family=Mona+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* Global Styles using Mona Sans for everything */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #000; /* Pure black background */
+      font-family: 'Mona Sans', sans-serif;
+      color: white;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      text-align: center;
+      padding: 1rem;
+    }
+    header, footer {
+      width: 100%;
+      text-align: center;
+      padding: 1rem 0;
+    }
+    /* Move title down slightly */
+    header {
+      margin-top: 2rem;
+    }
+    /* Extra bottom margin for footer */
+    footer {
+      margin-bottom: 2rem;
+    }
+    #container {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 90%;
+      max-width: 1200px;
+    }
+    /* Bold Title */
+    #title {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 8px #08f, 0 0 16px #08f;
+    }
+    /* Digital Timer Display */
+    #timerDisplay {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      text-shadow: 0 0 8px #08f, 0 0 16px #08f, 0 0 24px #08f;
+    }
+    /* Redesigned Start Button */
+    #startBtn {
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+      background: linear-gradient(45deg, #08f, #0ff);
+      border: none;
+      border-radius: 1rem;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 0 10px #08f, 0 0 20px #08f;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-bottom: 1.5rem;
+    }
+    #startBtn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px #08f, 0 0 30px #08f;
+    }
+    #startBtn:active {
+      transform: scale(0.95);
+    }
+    /* Containers for Session Boxes and Batteries */
+    #boxes {
+      width: 100%;
+    }
+    .session-container {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: nowrap;
+      margin-bottom: 1rem;
+    }
+    .battery-container {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: nowrap;
+      margin-bottom: 3rem;
+    }
+    /* Session Box (Focus Session) */
+    .box {
+      width: 30vmin;
+      height: 30vmin;
+      display: grid;
+      place-content: center;
+      position: relative;
+      border: solid 5px transparent;
+      border-radius: 2em;
+      /* Animated Gradient Background */
+      --border-angle: 0turn;
+      --main-bg: conic-gradient(
+          from var(--border-angle),
+          #213,
+          #112 5%,
+          #112 60%,
+          #213 95%
+        );
+      --gradient-border: conic-gradient(from var(--border-angle), transparent 25%, #08f, #f03 99%, transparent);
+      background: 
+        var(--main-bg) padding-box,
+        var(--gradient-border) border-box,
+        var(--main-bg) border-box;
+      background-position: center center;
+      animation: bg-spin 3s linear infinite;
+      overflow: hidden;
+    }
+    @keyframes bg-spin {
+      to {
+        --border-angle: 1turn;
+      }
+    }
+    .box:hover {
+      animation-play-state: paused;
+    }
+    @property --border-angle {
+      syntax: "<angle>";
+      inherits: true;
+      initial-value: 0turn;
+    }
+    /* Inner Fill for Session Box */
+    .box .fill {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 0%;
+      background: linear-gradient(to top, #08f, #0ff);
+      z-index: 1;
+      transition: height 0.5s linear;
+    }
+    /* Session Label */
+    .box .content {
+      position: relative;
+      z-index: 2;
+      font-size: 1.2rem;
+    }
+    /* Battery Indicator for Breaks */
+    .battery {
+      width: 25vmin;
+      height: 8vmin;
+      border: 3px solid white;
+      border-radius: 5px;
+      position: relative;
+      margin: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    /* Battery Body */
+    .battery .battery-body {
+      width: 100%;
+      height: 60%;
+      background: transparent;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Battery Fill: with a green gradient */
+    .battery .battery-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, #00ff00, #00cc00);
+      transition: width 0.5s linear;
+    }
+    /* Battery Tip */
+    .battery::after {
+      content: "";
+      position: absolute;
+      right: -10px;
+      top: 30%;
+      width: 8px;
+      height: 40%;
+      background: white;
+      border-radius: 2px;
+    }
+    /* Battery Label */
+    .battery-label {
+      font-size: 0.9rem;
+      margin-top: 0.2rem;
+    }
+    /* Responsive Adjustments */
+    @media (min-width: 769px) {
+      .session-container, .battery-container {
+        flex-direction: row;
+        align-items: center;
+      }
+    }
+    @media (max-width: 768px) {
+      .session-container, .battery-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      .box, .battery {
+        width: 40vmin;
+      }
+      #timerDisplay {
+        font-size: 1.8rem;
+      }
+      #startBtn {
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
+      }
+      #title {
+        font-size: 1.8rem;
+      }
+    }
+    @media (max-width: 480px) {
+      .box, .battery {
+        width: 45vmin;
+      }
+      #title {
+        font-size: 1.6rem;
+      }
+      #startBtn {
+        font-size: 0.9rem;
+        padding: 0.7rem 1.2rem;
+      }
+    }
+    /* Footer with Neon Link using Mona Sans */
+    footer {
+      font-family: 'Mona Sans', sans-serif;
+      font-size: 16px;
+      margin-bottom: 2rem;
+    }
+    footer a {
+      font-family: 'Mona Sans', sans-serif;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      text-shadow: 0 0 5px white, 0 0 10px white, 0 0 20px white;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <!-- Bold Title -->
+    <h1 id="title">25-Minute Focus Sessions</h1>
+  </header>
+  
+  <div id="container">
+    <!-- Digital Timer Display -->
+    <div id="timerDisplay">00:00</div>
+    
+    <!-- Start Button -->
+    <button id="startBtn">Start</button>
+    
+    <!-- Session Boxes and Battery Indicators -->
+    <div id="boxes">
+      <div class="session-container">
+        <!-- Session 1 -->
+        <div class="box" data-session="1">
+          <div class="fill"></div>
+          <div class="content">Session 1</div>
+        </div>
+        <!-- Session 2 -->
+        <div class="box" data-session="2">
+          <div class="fill"></div>
+          <div class="content">Session 2</div>
+        </div>
+        <!-- Session 3 -->
+        <div class="box" data-session="3">
+          <div class="fill"></div>
+          <div class="content">Session 3</div>
+        </div>
+      </div>
+      <div class="battery-container">
+        <!-- Battery for Break after Session 1 -->
+        <div class="battery" data-break="1">
+          <div class="battery-body">
+            <div class="battery-fill"></div>
+          </div>
+          <div class="battery-label">5 Minute Break</div>
+        </div>
+        <!-- Battery for Break after Session 2 -->
+        <div class="battery" data-break="2">
+          <div class="battery-body">
+            <div class="battery-fill"></div>
+          </div>
+          <div class="battery-label">5 Minute Break</div>
+        </div>
+        <!-- Battery for Break after Session 3 -->
+        <div class="battery" data-break="3">
+          <div class="battery-body">
+            <div class="battery-fill"></div>
+          </div>
+          <div class="battery-label">5 Minute Break</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Footer with Neon PharmX Link -->
+  <footer>
+    Focus with <a href="https://linktr.ee/pharmx" target="_blank" rel="noopener noreferrer">PharmX</a>
+  </footer>
+  
+  <!-- Audio Alert Element -->
+  <audio id="alertSound" src="https://pharmx.co.uk/congrats.mp3" preload="auto"></audio>
+  
+  <script>
+    // Production Durations:
+    // - Focus Session Duration: 25 minutes (1500 seconds)
+    // - Break Duration: 5 minutes (300 seconds)
+    const SESSION_DURATION = 1500; // 25 minutes in seconds
+    const BREAK_DURATION = 300;    // 5 minutes in seconds
+    
+    const sessionBoxes = document.querySelectorAll('.box');
+    const batteryIndicators = document.querySelectorAll('.battery');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const startBtn = document.getElementById('startBtn');
+    const alertSound = document.getElementById('alertSound');
+    
+    let currentSessionIndex = 0;
+    let mode = "idle"; // "idle", "session", or "break"
+    let remainingTime = SESSION_DURATION;
+    let timerInterval = null;
+    
+    // Utility: Format seconds as MM:SS.
+    function formatTime(seconds) {
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+    
+    // Update UI based on current mode.
+    function updateUI() {
+      if (mode === "session") {
+        timerDisplay.textContent = formatTime(remainingTime);
+        const progress = ((SESSION_DURATION - remainingTime) / SESSION_DURATION) * 100;
+        sessionBoxes[currentSessionIndex].querySelector('.fill').style.height = progress + '%';
+      } else if (mode === "break") {
+        timerDisplay.textContent = formatTime(remainingTime);
+        const progress = ((BREAK_DURATION - remainingTime) / BREAK_DURATION) * 100;
+        if (batteryIndicators[currentSessionIndex]) {
+          batteryIndicators[currentSessionIndex].querySelector('.battery-fill').style.width = progress + '%';
+        }
+      }
+    }
+    
+    // Timer tick function.
+    function tick() {
+      remainingTime--;
+      updateUI();
+      if (remainingTime <= 0) {
+        clearInterval(timerInterval);
+        if (mode === "session") {
+          // End of focus session: fill its progress completely.
+          sessionBoxes[currentSessionIndex].querySelector('.fill').style.height = '100%';
+          // Play alert sound for end of session.
+          alertSound.play().catch(error => console.error("Sound error:", error));
+          // Start break after session.
+          mode = "break";
+          remainingTime = BREAK_DURATION;
+          // Reset battery fill.
+          batteryIndicators[currentSessionIndex].querySelector('.battery-fill').style.width = '0%';
+          updateUI();
+          timerInterval = setInterval(tick, 1000);
+        } else if (mode === "break") {
+          // End of break: fill battery completely.
+          if (batteryIndicators[currentSessionIndex]) {
+            batteryIndicators[currentSessionIndex].querySelector('.battery-fill').style.width = '100%';
+          }
+          // Play alert sound for end of break.
+          alertSound.play().catch(error => console.error("Sound error:", error));
+          currentSessionIndex++;
+          if (currentSessionIndex < sessionBoxes.length) {
+            // Prepare for next session.
+            mode = "idle";
+            remainingTime = SESSION_DURATION;
+            timerDisplay.textContent = "00:00";
+            startBtn.textContent = "Start";
+            startBtn.style.display = "inline-block";
+          } else {
+            timerDisplay.textContent = "All sessions completed!";
+          }
+        }
+      }
+    }
+    
+    // Start Button: When clicked, begin the session.
+    startBtn.addEventListener('click', () => {
+      if (mode === "idle") {
+        mode = "session";
+        remainingTime = SESSION_DURATION;
+        startBtn.style.display = "none"; // Hide button during session
+        updateUI();
+        timerInterval = setInterval(tick, 1000);
+      }
+    });
+  </script>
+</body>
+</html>
