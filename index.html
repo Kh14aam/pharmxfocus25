@@ -220,6 +220,7 @@
         border: 2px solid white;
         position: relative;
         animation: none;
+        overflow: hidden; /* Added to keep the fill inside the box */
       }
       /* Remove previous ::before animation */
       .box::before {
@@ -433,7 +434,6 @@
           alertSound.play().catch(error => console.error("Sound error:", error));
           // Start break after session.
           mode = "break";
-          remainingTime = mode = "break";
           remainingTime = BREAK_DURATION;
           // Reset battery fill.
           batteryIndicators[currentSessionIndex].querySelector('.battery-fill').style.width = '0%';
