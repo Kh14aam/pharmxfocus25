@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <!-- Improved viewport settings for mobile responsiveness -->
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <meta
       name="description"
       content="PharmX Pomodoro Timer: Enhance your productivity with focused 25-minute sessions followed by 5-minute breaks. Stay in the zone with PharmX."
@@ -15,29 +18,32 @@
       rel="stylesheet"
     />
     <style>
-      /* Define custom properties for easy theming */
+      /* CSS Variables for easy theming */
       :root {
         --primary-bg: #000;
         --primary-color: #fff;
         --accent-color: #08f;
-        --gradient-bg: conic-gradient(
-          from var(--border-angle, 0turn),
-          #213,
-          #112 5%,
-          #112 60%,
-          #213 95%
-        );
+        --secondary-accent: #0ff;
+        --font-family: "Mona Sans", sans-serif;
+        --border-transition: 0.5s ease-in-out;
+        --btn-transition: transform 0.2s, box-shadow 0.2s;
       }
+      
       /* Global Styles */
+      * {
+        box-sizing: border-box;
+      }
+      
       html,
       body {
         margin: 0;
         padding: 0;
         height: 100%;
         background: var(--primary-bg);
-        font-family: "Mona Sans", sans-serif;
+        font-family: var(--font-family);
         color: var(--primary-color);
       }
+      
       body {
         display: flex;
         flex-direction: column;
@@ -47,78 +53,80 @@
         padding: 1rem;
         min-height: 100vh;
       }
-      header,
-      footer {
+      
+      header {
         width: 100%;
         text-align: center;
         padding: 1rem 0;
-      }
-      header {
         margin-top: 2rem;
       }
-      footer {
-        margin-bottom: 2rem;
-      }
-      #container {
+      
+      main {
         flex-grow: 1;
+        width: 100%;
+        max-width: 1200px;
+        padding: 1rem;
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        width: 90%;
-        max-width: 1200px;
       }
-      #title {
-        font-size: 2rem;
-        font-weight: bold;
-        margin-bottom: 1rem;
-        text-shadow: 0 0 8px var(--accent-color), 0 0 16px var(--accent-color);
-      }
+      
+      /* Timer Display */
       #timerDisplay {
-        font-size: 2rem;
-        margin-bottom: 2rem;
-        text-shadow: 0 0 8px var(--accent-color), 0 0 16px var(--accent-color),
-          0 0 24px var(--accent-color);
+        font-size: 2.5rem;
+        margin: 0.5rem 0 1rem 0; /* Reduced top margin moves the timer up a bit */
+        text-shadow: 0 0 8px var(--accent-color), 0 0 16px var(--accent-color);
+        outline: none;
       }
+      
+      /* Button Styles */
       .btn {
         padding: 1rem 2rem;
         font-size: 1.2rem;
         cursor: pointer;
-        background: linear-gradient(45deg, var(--accent-color), #0ff);
+        background: linear-gradient(45deg, var(--accent-color), var(--secondary-accent));
         border: none;
         border-radius: 1rem;
         color: var(--primary-color);
         text-transform: uppercase;
         letter-spacing: 1px;
         box-shadow: 0 0 10px var(--accent-color), 0 0 20px var(--accent-color);
-        transition: transform 0.2s, box-shadow 0.2s;
-        margin-bottom: 1.5rem;
+        transition: var(--btn-transition);
+        margin: 0.5rem;
       }
-      .btn:hover {
+      
+      .btn:hover,
+      .btn:focus-visible {
         transform: scale(1.05);
         box-shadow: 0 0 20px var(--accent-color), 0 0 30px var(--accent-color);
       }
+      
       .btn:active {
         transform: scale(0.95);
       }
-      #boxes {
-        width: 100%;
+      
+      /* Fixed Control Buttons at the Bottom Center */
+      .button-container {
+        position: fixed;
+        bottom: 60px; /* Moved up from 20px to 40px */
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        display: flex;
+        gap: 1rem;
       }
-      .session-container {
+      
+      /* Containers for sessions and breaks */
+      .session-container,
+      .battery-container {
         display: flex;
         justify-content: center;
         gap: 1rem;
         flex-wrap: wrap;
         margin-bottom: 1rem;
       }
-      .battery-container {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-        flex-wrap: wrap;
-        margin-bottom: 3rem;
-      }
-      /* Session Box */
+      
+      /* Session Box Styles */
       .box {
         width: 30vmin;
         height: 30vmin;
@@ -128,43 +136,58 @@
         border: 5px solid transparent;
         border-radius: 2em;
         background: 
-          var(--gradient-bg) padding-box,
+          conic-gradient(
+            from var(--border-angle, 0turn),
+            #213,
+            #112 5%,
+            #112 60%,
+            #213 95%
+          )
+          padding-box,
           conic-gradient(from var(--border-angle, 0turn), transparent 25%, var(--accent-color), #f03 99%, transparent)
-            border-box,
-          var(--gradient-bg) border-box;
-        background-position: center center;
+          border-box;
         animation: bg-spin 3s linear infinite;
         overflow: hidden;
+        transition: transform 0.3s;
       }
+      
+      .box:focus-within,
+      .box:hover {
+        transform: scale(1.03);
+        animation-play-state: paused;
+      }
+      
       @keyframes bg-spin {
         to {
           --border-angle: 1turn;
         }
       }
+      
       @property --border-angle {
         syntax: "<angle>";
         inherits: true;
         initial-value: 0turn;
       }
-      .box:hover {
-        animation-play-state: paused;
-      }
+      
       .box .fill {
         position: absolute;
         bottom: 0;
         left: 0;
         width: 100%;
         height: 0%;
-        background: linear-gradient(to top, var(--accent-color), #0ff);
+        background: linear-gradient(to top, var(--accent-color), var(--secondary-accent));
         z-index: 1;
         transition: height 0.5s linear;
       }
+      
       .box .content {
         position: relative;
         z-index: 2;
         font-size: 1.2rem;
+        font-weight: 700;
       }
-      /* Battery Indicator */
+      
+      /* Battery Indicator Styles */
       .battery {
         width: 25vmin;
         height: 8vmin;
@@ -177,6 +200,7 @@
         align-items: center;
         justify-content: center;
       }
+      
       .battery .battery-body {
         width: 100%;
         height: 60%;
@@ -184,12 +208,14 @@
         position: relative;
         overflow: hidden;
       }
+      
       .battery .battery-fill {
         height: 100%;
         width: 0%;
         background: linear-gradient(to right, #00ff00, #00cc00);
         transition: width 0.5s linear;
       }
+      
       .battery::after {
         content: "";
         position: absolute;
@@ -200,24 +226,16 @@
         background: var(--primary-color);
         border-radius: 2px;
       }
+      
       .battery-label {
         font-size: 0.9rem;
         margin-top: 0.2rem;
       }
-      footer a {
-        color: var(--primary-color);
-        text-decoration: none;
-        font-weight: bold;
-        text-shadow: 0 0 5px var(--primary-color), 0 0 10px var(--primary-color),
-          0 0 20px var(--primary-color);
-      }
+      
       /* Responsive Adjustments */
       @media (max-width: 768px) {
-        #title {
-          font-size: 1.8rem;
-        }
         #timerDisplay {
-          font-size: 1.8rem;
+          font-size: 2rem;
         }
         .btn {
           font-size: 1rem;
@@ -232,13 +250,14 @@
           height: 12vmin;
         }
       }
+      
       @media (max-width: 480px) {
         .box,
         .battery {
           width: 45vmin;
         }
-        #title {
-          font-size: 1.6rem;
+        #timerDisplay {
+          font-size: 1.8rem;
         }
         .btn {
           font-size: 0.9rem;
@@ -250,98 +269,100 @@
   <body>
     <header>
       <h1 id="title">Pomodoro Timer</h1>
+      <p>25-minute focus sessions with 5-minute breaks. Click start and stay on track!</p>
     </header>
-    <div id="container">
-      <!-- Digital Timer Display -->
-      <div id="timerDisplay">00:00</div>
-      <!-- Start and Pause Buttons -->
-      <div class="button-container">
-        <button id="startBtn" class="btn">Start</button>
-        <button id="pauseBtn" class="btn" style="display: none;">Pause</button>
+    <main>
+      <!-- Timer Display with ARIA live for accessibility -->
+      <div id="timerDisplay" role="timer" aria-live="polite" tabindex="0">
+        00:00
       </div>
-      <!-- Session Boxes and Battery Indicators -->
-      <div id="boxes">
-        <div class="session-container">
-          <div class="box" data-session="1">
+      <!-- Sessions and Breaks -->
+      <section id="boxes">
+        <div class="session-container" aria-label="Focus sessions">
+          <div class="box" data-session="1" tabindex="0">
             <div class="fill"></div>
             <div class="content">Session 1</div>
           </div>
-          <div class="box" data-session="2">
+          <div class="box" data-session="2" tabindex="0">
             <div class="fill"></div>
             <div class="content">Session 2</div>
           </div>
-          <div class="box" data-session="3">
+          <div class="box" data-session="3" tabindex="0">
             <div class="fill"></div>
             <div class="content">Session 3</div>
           </div>
         </div>
-        <div class="battery-container">
+        <div class="battery-container" aria-label="Break indicators (5 minute breaks)">
           <div class="battery" data-break="1">
             <div class="battery-body">
               <div class="battery-fill"></div>
             </div>
-            <div class="battery-label">5 Minute Break</div>
+            <div class="battery-label">Break 1</div>
           </div>
           <div class="battery" data-break="2">
             <div class="battery-body">
               <div class="battery-fill"></div>
             </div>
-            <div class="battery-label">5 Minute Break</div>
+            <div class="battery-label">Break 2</div>
           </div>
           <div class="battery" data-break="3">
             <div class="battery-body">
               <div class="battery-fill"></div>
             </div>
-            <div class="battery-label">5 Minute Break</div>
+            <div class="battery-label">Break 3</div>
           </div>
         </div>
-      </div>
+      </section>
+    </main>
+    <!-- Fixed Control Buttons at Bottom Center -->
+    <div class="button-container">
+      <button id="startBtn" type="button" class="btn" aria-label="Start session">
+        Start
+      </button>
+      <button id="pauseBtn" type="button" class="btn" aria-label="Pause timer" style="display: none;">
+        Pause
+      </button>
     </div>
-    <footer>
-      Focus with
-      <a href="https://linktr.ee/pharmx" target="_blank" rel="noopener noreferrer">PharmX</a>
-    </footer>
     <!-- Audio Alert -->
     <audio id="alertSound" src="https://pharmx.co.uk/congrats.mp3" preload="auto"></audio>
     <script>
       const SESSION_DURATION = 1500; // 25 minutes in seconds
-      const BREAK_DURATION = 300;    // 5 minutes in seconds
-      
+      const BREAK_DURATION = 300; // 5 minutes in seconds
+
       const sessionBoxes = document.querySelectorAll('.box');
       const batteryIndicators = document.querySelectorAll('.battery');
       const timerDisplay = document.getElementById('timerDisplay');
       const startBtn = document.getElementById('startBtn');
       const pauseBtn = document.getElementById('pauseBtn');
       const alertSound = document.getElementById('alertSound');
-      
+
       let currentSessionIndex = 0;
       let mode = "idle"; // "idle", "session", or "break"
       let remainingTime = SESSION_DURATION;
       let timerInterval = null;
       let isPaused = false;
-      
-      // Utility: Format seconds as MM:SS.
+
+      // Format seconds as MM:SS.
       function formatTime(seconds) {
         const m = Math.floor(seconds / 60);
         const s = seconds % 60;
         return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
       }
-      
+
       // Update UI based on current mode.
       function updateUI() {
+        timerDisplay.textContent = formatTime(remainingTime);
         if (mode === "session") {
-          timerDisplay.textContent = formatTime(remainingTime);
           const progress = ((SESSION_DURATION - remainingTime) / SESSION_DURATION) * 100;
           sessionBoxes[currentSessionIndex].querySelector('.fill').style.height = progress + '%';
         } else if (mode === "break") {
-          timerDisplay.textContent = formatTime(remainingTime);
           const progress = ((BREAK_DURATION - remainingTime) / BREAK_DURATION) * 100;
           if (batteryIndicators[currentSessionIndex]) {
             batteryIndicators[currentSessionIndex].querySelector('.battery-fill').style.width = progress + '%';
           }
         }
       }
-      
+
       // Timer tick function.
       function tick() {
         if (!isPaused) {
@@ -349,19 +370,16 @@
           updateUI();
           if (remainingTime <= 0) {
             clearInterval(timerInterval);
+            alertSound.play().catch(error => console.error("Sound error:", error));
             if (mode === "session") {
               sessionBoxes[currentSessionIndex].querySelector('.fill').style.height = '100%';
-              alertSound.play().catch(error => console.error("Sound error:", error));
               mode = "break";
               remainingTime = BREAK_DURATION;
               batteryIndicators[currentSessionIndex].querySelector('.battery-fill').style.width = '0%';
               updateUI();
               timerInterval = setInterval(tick, 1000);
             } else if (mode === "break") {
-              if (batteryIndicators[currentSessionIndex]) {
-                batteryIndicators[currentSessionIndex].querySelector('.battery-fill').style.width = '100%';
-              }
-              alertSound.play().catch(error => console.error("Sound error:", error));
+              batteryIndicators[currentSessionIndex].querySelector('.battery-fill').style.width = '100%';
               currentSessionIndex++;
               if (currentSessionIndex < sessionBoxes.length) {
                 mode = "idle";
@@ -380,12 +398,12 @@
           }
         }
       }
-      
-      // Start Button: Begin session.
+
+      // Start Button: Begin or reset session.
       startBtn.addEventListener('click', () => {
         if (mode === "idle" || currentSessionIndex >= sessionBoxes.length) {
           if (currentSessionIndex >= sessionBoxes.length) {
-            // Reset the timer
+            // Reset all sessions
             currentSessionIndex = 0;
             sessionBoxes.forEach(box => box.querySelector('.fill').style.height = '0%');
             batteryIndicators.forEach(battery => battery.querySelector('.battery-fill').style.width = '0%');
@@ -398,8 +416,8 @@
           timerInterval = setInterval(tick, 1000);
         }
       });
-      
-      // Pause Button: Pause/Resume the timer.
+
+      // Pause Button: Toggle pause/resume.
       pauseBtn.addEventListener('click', () => {
         isPaused = !isPaused;
         pauseBtn.textContent = isPaused ? "Resume" : "Pause";
