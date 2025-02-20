@@ -94,6 +94,33 @@
         .container {
           flex-direction: column;
         }
+        footer {
+          display: none;
+        }
+      }
+      /* Footer CSS */
+      footer {
+        position: fixed;
+        bottom: 20px;
+        width: 100%;
+        text-align: center;
+        padding: 1rem 0;
+        background: transparent;
+        font-family: "Mona Sans", sans-serif;
+        font-size: 16px;
+        color: white;
+        z-index: 10;
+      }
+      footer .transparent {
+        opacity: 0.7;
+      }
+      footer .neon {
+        color: #fff;
+        text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff;
+        text-decoration: none;
+      }
+      footer .neon:hover {
+        text-shadow: 0 0 3px #fff, 0 0 6px #fff, 0 0 9px #fff;
       }
     </style>
   </head>
@@ -239,5 +266,10 @@
         state.interval = setInterval(() => tick(index), 1000);
       }
     </script>
+    <!-- Footer HTML -->
+    <footer>
+      <span class="transparent">Focus with </span>
+      <a class="neon" href="https://linktr.ee/pharmx" target="_blank" rel="noopener noreferrer">PharmX</a>
+    </footer>
   </body>
 </html>
